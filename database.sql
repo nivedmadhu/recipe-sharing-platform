@@ -1,0 +1,35 @@
+CREATE DATABASE IF NOT EXISTS recipe_db;
+USE recipe_db;
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE recipes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  title VARCHAR(150) NOT NULL,
+  description TEXT,
+  category VARCHAR(50) NOT NULL,
+  ingredients TEXT NOT NULL,
+  instructions TEXT NOT NULL,
+  image_url VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE reviews (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  recipe_id INT NOT NULL,
+  user_id INT NOT NULL,
+  rating TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY one_review_per_user (recipe_id, user_id),
+  FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
